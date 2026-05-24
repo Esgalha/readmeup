@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>torvalds/linux: Linux kernel source tree</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #ffffff;
+      }
+      .OverviewRepoFiles-module__Box_1__OXeac {
+        border: 1px solid #ccc;
+        padding: 8px;
+      }
+      .OverviewHeader-module__Box__cC1RH {
+        border: 1px solid #eee;
+        padding: 8px;
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="repo-content-turbo-frame">
+      <!-- File browser section – starts first in the DOM -->
+      <div class="OverviewRepoFiles-module__Box_1__OXeac" data-testid="overview-repo-files">
+        <div class="branch-actions-bar"><span>master</span></div>
+        <table class="Table-module__files">
+          <tbody>
+            <tr>
+              <td>Makefile</td>
+            </tr>
+            <tr>
+              <td>README.md</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- README / sidebar section – extension should move this above the file browser -->
+      <div class="OverviewHeader-module__Box__cC1RH" data-testid="overview-header">
+        <section class="overview-section">
+          <article class="markdown-body entry-content container-lg">
+            <h1>Linux kernel</h1>
+            <p>This is the main line of development for the Linux kernel.</p>
+          </article>
+        </section>
+        <div class="sidebar-section">
+          <p>Contributing</p>
+          <p>MIT License</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Simulate Turbo SPA navigation
+      window.__simulateNavigation = function (newPath, newTitle) {
+        window.history.pushState({}, newTitle, newPath);
+        document.title = newTitle;
+        document.dispatchEvent(new Event('turbo:load'));
+      };
+
+      // Simulate GitHub's turbo-frame lazy-loading fresh content from the server.
+      // The frame replaces all its children with the server response (original order:
+      // files first, README second), then fires turbo:frame-load on the frame element.
+      window.__simulateFrameLoad = function () {
+        const frame = document.getElementById('repo-content-turbo-frame');
+        frame.innerHTML = `
+          <div class="OverviewRepoFiles-module__Box_1__OXeac" data-testid="overview-repo-files">
+            <div class="branch-actions-bar"><span>master</span></div>
+            <table class="Table-module__files">
+              <tbody>
+                <tr><td>Makefile</td></tr>
+                <tr><td>README.md</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="OverviewHeader-module__Box__cC1RH" data-testid="overview-header">
+            <section class="overview-section">
+              <article class="markdown-body entry-content container-lg">
+                <h1>Linux kernel</h1>
+                <p>This is the main line of development for the Linux kernel.</p>
+              </article>
+            </section>
+            <div class="sidebar-section">
+              <p>Contributing</p>
+              <p>MIT License</p>
+            </div>
+          </div>`;
+        frame.dispatchEvent(new Event('turbo:frame-load', { bubbles: true }));
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>GitLab.org / GitLab · GitLab</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="tree-holder" class="tree-holder" data-testid="tree-holder">
+      <table class="files-slider tree-table">
+        <tbody>
+          <tr class="file">
+            <td>README.md</td>
+          </tr>
+          <tr class="file">
+            <td>Makefile</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="readme-holder" data-testid="readme-holder">
+      <div class="file-content wiki">
+        <article class="md">
+          <h1>GitLab</h1>
+          <p>GitLab is an open-source end-to-end software development platform.</p>
+        </article>
+      </div>
+    </div>
+
+    <script>
+      window.__simulateNavigation = function (newPath, newTitle) {
+        window.history.pushState({}, newTitle, newPath);
+        document.title = newTitle;
+        window.dispatchEvent(new Event('popstate'));
+      };
+    </script>
+  </body>
+</html>
