@@ -1,0 +1,34 @@
+{
+  "manifest_version": 2,
+  "name": "ReadmeUp",
+  "version": "0.1.0",
+  "description": "Surfaces README files at the top of repository pages",
+  "permissions": [
+    "https://github.com/*",
+    "https://api.github.com/*",
+    "https://gitlab.com/*",
+    "https://api.gitlab.com/*",
+    "https://bitbucket.org/*",
+    "https://api.bitbucket.org/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*/*", "https://gitlab.com/*/*", "https://bitbucket.org/*/*"],
+      "js": ["src/content.ts"]
+    }
+  ],
+  "background": {
+    "scripts": ["src/background/service-worker.ts"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "ReadmeUp"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "readmeup@esgalha",
+      "strict_min_version": "109.0"
+    }
+  }
+}

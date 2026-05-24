@@ -1,0 +1,7 @@
+node_modules/
+dist/
+coverage/
+.superpowers/
+CLAUDE.md
+*.zip
+.env
