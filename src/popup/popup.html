@@ -37,6 +37,30 @@
       a:hover {
         text-decoration: underline;
       }
+      .divider {
+        border: none;
+        border-top: 1px solid #d0d7de;
+        margin: 10px 0;
+      }
+      .repo-label {
+        font-size: 11px;
+        color: #57606a;
+        margin: 0 0 6px;
+        word-break: break-all;
+      }
+      .toggle-btn {
+        width: 100%;
+        padding: 5px 0;
+        font-size: 12px;
+        cursor: pointer;
+        border: 1px solid #d0d7de;
+        border-radius: 6px;
+        background: #f6f8fa;
+        color: #24292f;
+      }
+      .toggle-btn:hover {
+        background: #eaeef2;
+      }
     </style>
   </head>
   <body>
@@ -44,6 +68,11 @@
     <p class="version" id="version">v1.0.0</p>
     <p class="platforms">Active on GitHub, GitLab &amp; Bitbucket</p>
     <a href="https://github.com/Esgalha/readmeup" target="_blank">View on GitHub</a>
+    <div id="repo-controls" style="display: none">
+      <hr class="divider" />
+      <p class="repo-label" id="repo-label"></p>
+      <button class="toggle-btn" id="toggle-btn"></button>
+    </div>
     <script src="popup.ts" type="module"></script>
   </body>
 </html>
