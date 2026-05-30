@@ -186,6 +186,43 @@ describe('reorganize', () => {
   });
 });
 
+describe('getCollapseTargets', () => {
+  it('returns anchor (preceding sibling of .markdown-body parent) and collapseTarget (the parent)', () => {
+    document.documentElement.innerHTML = `
+      <div>
+        <div id="header">README</div>
+        <div id="section"><div class="markdown-body"><h1>Readme</h1></div></div>
+      </div>`;
+    const result = createGitHubAdapter().getCollapseTargets();
+    expect(result?.anchor).toBe(document.getElementById('header'));
+    expect(result?.collapseTarget).toBe(document.getElementById('section'));
+  });
+
+  it('returns anchor (preceding sibling of [data-hpc]) and collapseTarget ([data-hpc])', () => {
+    document.documentElement.innerHTML = `
+      <div><div id="nav">Browse files</div><div id="hpc" data-hpc>Linux content</div></div>`;
+    const result = createGitHubAdapter().getCollapseTargets();
+    expect(result?.anchor).toBe(document.getElementById('nav'));
+    expect(result?.collapseTarget).toBe(document.getElementById('hpc'));
+  });
+
+  it('returns null when .markdown-body parent has no preceding sibling', () => {
+    document.documentElement.innerHTML = `
+      <div id="section"><div class="markdown-body"><h1>Readme</h1></div></div>`;
+    expect(createGitHubAdapter().getCollapseTargets()).toBeNull();
+  });
+
+  it('returns null when [data-hpc] has no preceding sibling', () => {
+    document.documentElement.innerHTML = '<div data-hpc>Linux content</div>';
+    expect(createGitHubAdapter().getCollapseTargets()).toBeNull();
+  });
+
+  it('returns null when neither .markdown-body nor [data-hpc] exists', () => {
+    document.documentElement.innerHTML = '<div><p>no readme</p></div>';
+    expect(createGitHubAdapter().getCollapseTargets()).toBeNull();
+  });
+});
+
 describe('onNavigate', () => {
   it('fires callback on turbo:load', () => {
     const cb = vi.fn();

@@ -69,6 +69,17 @@ export function createGitLabAdapter(): PlatformAdapter {
       };
     },
 
+    getCollapseTargets() {
+      const readmeHolder = document.querySelector<HTMLElement>('.readme-holder');
+      if (!readmeHolder) return null;
+      const titleBar = readmeHolder.firstElementChild as HTMLElement | null;
+      const blobViewer = titleBar?.nextElementSibling as HTMLElement | null;
+      if (!titleBar || !blobViewer) return null;
+      const firstInner = titleBar.firstElementChild as HTMLElement | null;
+      const anchor = firstInner && firstInner.children.length > 0 ? firstInner : titleBar;
+      return { anchor, collapseTarget: blobViewer };
+    },
+
     onNavigate(callback) {
       window.addEventListener('popstate', callback);
 

@@ -8,6 +8,7 @@ function makeAdapter(): PlatformAdapter {
     isRepoPage: vi.fn(() => false),
     onNavigate: vi.fn(() => () => undefined),
     reorganize: vi.fn(() => null),
+    getCollapseTargets: vi.fn(() => null),
   };
 }
 

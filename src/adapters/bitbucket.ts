@@ -55,6 +55,10 @@ export function createBitbucketAdapter(): PlatformAdapter {
       };
     },
 
+    getCollapseTargets() {
+      return null;
+    },
+
     onNavigate(callback) {
       window.addEventListener('popstate', callback);
       return () => {

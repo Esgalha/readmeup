@@ -2,6 +2,7 @@ import { createBitbucketAdapter } from './adapters/bitbucket.js';
 import { createGitHubAdapter } from './adapters/github.js';
 import { createGitLabAdapter } from './adapters/gitlab.js';
 import { registerAdapter, getAdapter } from './adapters/registry.js';
+import { setupCollapse } from './collapse.js';
 
 registerAdapter('github.com', createGitHubAdapter);
 registerAdapter('gitlab.com', createGitLabAdapter);
@@ -10,7 +11,15 @@ registerAdapter('bitbucket.org', createBitbucketAdapter);
 function tryInject(): (() => void) | null {
   const adapter = getAdapter(location.hostname);
   if (!adapter || !adapter.isRepoPage()) return null;
-  return adapter.reorganize();
+  const reorganizeCleanup = adapter.reorganize();
+  if (!reorganizeCleanup) return null;
+  const targets = adapter.getCollapseTargets();
+  if (!targets) return reorganizeCleanup;
+  const collapseCleanup = setupCollapse(targets.anchor, targets.collapseTarget);
+  return () => {
+    collapseCleanup();
+    reorganizeCleanup();
+  };
 }
 
 let currentCleanup: (() => void) | null = null;
@@ -57,11 +66,11 @@ function setupGuard(): void {
   const a = getAdapter(location.hostname);
   if (!a || !a.isRepoPage()) return;
   const obs = new MutationObserver(() => {
-    const readme = document.querySelector('.markdown-body');
+    const targets = a.getCollapseTargets();
     const table = document.querySelector('table');
-    if (!readme || !table) return;
+    if (!targets || !table) return;
     // compareDocumentPosition flag 2 = table precedes readme in DOM (wrong order)
-    if (!(readme.compareDocumentPosition(table) & 2)) return;
+    if (!(targets.collapseTarget.compareDocumentPosition(table) & 2)) return;
     // GitHub moved README back — discard stale cleanup and re-apply once.
     if (guardObserver === obs) cancelGuard();
     currentCleanup = null;

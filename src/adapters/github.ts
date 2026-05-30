@@ -74,6 +74,24 @@ export function createGitHubAdapter(): PlatformAdapter {
       };
     },
 
+    getCollapseTargets() {
+      const markdownBody = document.querySelector<HTMLElement>('.markdown-body');
+      if (markdownBody) {
+        const collapseTarget = markdownBody.parentElement;
+        if (!collapseTarget) return null;
+        const anchor = collapseTarget.previousElementSibling as HTMLElement | null;
+        if (!anchor) return null;
+        return { anchor, collapseTarget };
+      }
+      const hpcContent = document.querySelector<HTMLElement>('[data-hpc]');
+      if (hpcContent) {
+        const anchor = hpcContent.previousElementSibling as HTMLElement | null;
+        if (!anchor) return null;
+        return { anchor, collapseTarget: hpcContent };
+      }
+      return null;
+    },
+
     onNavigate(callback) {
       document.addEventListener('turbo:load', callback);
       window.addEventListener('popstate', callback);

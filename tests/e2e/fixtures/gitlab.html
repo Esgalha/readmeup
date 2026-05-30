@@ -26,14 +26,21 @@
       </table>
     </div>
 
-    <div class="readme-holder" data-testid="readme-holder">
-      <div class="file-content wiki">
-        <article class="md">
-          <h1>GitLab</h1>
-          <p>GitLab is an open-source end-to-end software development platform.</p>
-        </article>
+    <article class="file-holder readme-holder" data-testid="readme-holder">
+      <div class="js-file-title file-title-flex-parent">
+        <a href="#"><strong>README.md</strong></a>
       </div>
-    </div>
+      <div class="blob-viewer" data-testid="blob-viewer-content">
+        <div>
+          <div class="blob-viewer" data-path="README.md">
+            <div class="file-content js-markup-content md">
+              <h1>GitLab</h1>
+              <p>GitLab is an open-source end-to-end software development platform.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
 
     <script>
       window.__simulateNavigation = function (newPath, newTitle) {

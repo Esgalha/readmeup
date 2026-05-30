@@ -139,6 +139,44 @@ describe('reorganize', () => {
   });
 });
 
+describe('getCollapseTargets', () => {
+  it('returns title bar as anchor and blob viewer as collapseTarget', () => {
+    document.documentElement.innerHTML = `
+      <article class="readme-holder">
+        <div id="title" class="js-file-title">README.md</div>
+        <div id="blob" class="blob-viewer"><div class="file-content"><h1>GitLab</h1></div></div>
+      </article>`;
+    const result = createGitLabAdapter().getCollapseTargets();
+    expect(result?.anchor).toBe(document.getElementById('title'));
+    expect(result?.collapseTarget).toBe(document.getElementById('blob'));
+  });
+
+  it('uses the inner container as anchor when title bar first child has element children', () => {
+    document.documentElement.innerHTML = `
+      <article class="readme-holder">
+        <div class="js-file-title">
+          <div class="file-header-content"><a>README.md</a></div>
+        </div>
+        <div class="blob-viewer"><h1>Content</h1></div>
+      </article>`;
+    const result = createGitLabAdapter().getCollapseTargets();
+    expect(result?.anchor).toBe(document.querySelector('.file-header-content'));
+  });
+
+  it('returns null when .readme-holder has only one child', () => {
+    document.documentElement.innerHTML = `
+      <article class="readme-holder">
+        <div class="only-child"><h1>Content</h1></div>
+      </article>`;
+    expect(createGitLabAdapter().getCollapseTargets()).toBeNull();
+  });
+
+  it('returns null when .readme-holder does not exist', () => {
+    document.documentElement.innerHTML = '<div><p>no readme</p></div>';
+    expect(createGitLabAdapter().getCollapseTargets()).toBeNull();
+  });
+});
+
 describe('onNavigate', () => {
   it('fires callback on popstate', () => {
     const cb = vi.fn();

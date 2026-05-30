@@ -94,6 +94,13 @@ describe('reorganize', () => {
   });
 });
 
+describe('getCollapseTargets', () => {
+  it('always returns null', () => {
+    document.documentElement.innerHTML = '<main><article><h1>README</h1></article></main>';
+    expect(createBitbucketAdapter().getCollapseTargets()).toBeNull();
+  });
+});
+
 describe('onNavigate', () => {
   it('fires callback on popstate', () => {
     const cb = vi.fn();
