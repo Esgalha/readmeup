@@ -30,13 +30,13 @@ Works with markdown READMEs and plain-text READMEs (e.g. `torvalds/linux`).
 
 ## Installation
 
-### Firefox
-
-Install from [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/readmeup/).
-
 ### Chrome
 
 > Chrome Web Store listing coming soon.
+
+### Firefox
+
+Install from [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/readmeup/).
 
 ### Load Unpacked (Manual)
 
