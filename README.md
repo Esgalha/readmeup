@@ -134,3 +134,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 ## License
 
 MIT
+
+## Privacy
+
+See [PRIVACY.md](PRIVACY.md).
