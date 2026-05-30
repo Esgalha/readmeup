@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- CI workflow skips the test and build pipeline when only documentation files or Dependabot config change.
+- Release job moved to a dedicated `release.yml` workflow triggered by version tags only.
+
 ## [1.0.0] - 2026-05-25
 
 ### Added
