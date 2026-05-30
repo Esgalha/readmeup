@@ -1,12 +1,23 @@
+import browser from 'webextension-polyfill';
 import { createBitbucketAdapter } from './adapters/bitbucket.js';
 import { createGitHubAdapter } from './adapters/github.js';
 import { createGitLabAdapter } from './adapters/gitlab.js';
 import { registerAdapter, getAdapter } from './adapters/registry.js';
 import { setupCollapse } from './collapse.js';
+import { getDisabledRepos, setRepoEnabled } from './storage.js';
 
 registerAdapter('github.com', createGitHubAdapter);
 registerAdapter('gitlab.com', createGitLabAdapter);
 registerAdapter('bitbucket.org', createBitbucketAdapter);
+
+// In-memory cache of disabled repos, populated from storage on init.
+const disabledRepos = new Set<string>();
+
+function currentRepoKey(): string | null {
+  const parts = location.pathname.split('/').filter(Boolean);
+  if (parts.length < 2) return null;
+  return `${location.hostname}/${parts[0]}/${parts[1]}`;
+}
 
 function tryInject(): (() => void) | null {
   const adapter = getAdapter(location.hostname);
@@ -90,6 +101,8 @@ function run(): void {
     currentCleanup();
     currentCleanup = null;
   }
+  const key = currentRepoKey();
+  if (key && disabledRepos.has(key)) return;
   currentCleanup = tryInject();
 
   if (!currentCleanup) {
@@ -99,10 +112,43 @@ function run(): void {
   }
 }
 
+browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  const msg = message as { type: string };
+  const key = currentRepoKey();
+
+  if (msg.type === 'getState') {
+    sendResponse({ repoKey: key, enabled: !key || !disabledRepos.has(key) });
+    return true;
+  }
+
+  if (msg.type === 'toggle' && key) {
+    const enabling = disabledRepos.has(key);
+    if (enabling) {
+      disabledRepos.delete(key);
+      run();
+    } else {
+      disabledRepos.add(key);
+      if (currentCleanup) {
+        currentCleanup();
+        currentCleanup = null;
+      }
+    }
+    setRepoEnabled(key, enabling);
+    sendResponse(undefined);
+    return true;
+  }
+
+  return true;
+});
+
 const hostname = location.hostname;
 const adapter = getAdapter(hostname);
 if (adapter) {
-  run();
+  // Load disabled repos from storage before first run to avoid a flash on disabled repos.
+  getDisabledRepos().then((stored) => {
+    stored.forEach((k) => disabledRepos.add(k));
+    run();
+  });
   adapter.onNavigate(run);
 }
 
