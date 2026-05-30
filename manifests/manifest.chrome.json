@@ -3,6 +3,12 @@
   "name": "ReadmeUp",
   "version": "1.0.0",
   "description": "Surfaces README files at the top of repository pages",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
   "permissions": [],
   "host_permissions": [
     "https://github.com/*",
@@ -23,6 +29,10 @@
     "type": "module"
   },
   "action": {
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    },
     "default_popup": "src/popup/popup.html",
     "default_title": "ReadmeUp"
   }

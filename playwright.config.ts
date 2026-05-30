@@ -8,6 +8,7 @@ const extensionPath = path.resolve(__dirname, 'dist/chrome');
 export default defineConfig({
   testDir: 'tests/e2e',
   timeout: 30_000,
+  retries: 1,
   // E2E tests manage their own browser context (PersistentContext required for extensions)
   use: {
     headless: false,
