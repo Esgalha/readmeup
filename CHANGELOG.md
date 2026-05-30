@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Collapsible README toggle: a Hide/Show button above the moved README section, with collapsed state persisted per repo for the current browser session.
 
+### Fixed
+
+- Extension icon now appears in the browser toolbar, extension manager, and store listings.
+
 ### Changed
 
 - CI workflow skips the test and build pipeline when only documentation files or Dependabot config change.
