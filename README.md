@@ -12,6 +12,8 @@ When you land on a repository page, ReadmeUp physically reorders the existing DO
 
 Works with markdown READMEs and plain-text READMEs (e.g. `torvalds/linux`).
 
+The extension popup shows a toggle to disable ReadmeUp on the current repository. The preference is stored across browser sessions.
+
 ## Screenshots
 
 ![ReadmeUp on its own repository page](screenshots/GitHubReadmeup.png)
@@ -123,7 +125,8 @@ src/
 │   ├── gitlab.ts     # GitLab: walk-up from .readme-holder, two-phase hoist
 │   └── bitbucket.ts  # Bitbucket: walk-up from <article>
 ├── collapse.ts       # Platform-agnostic collapse toggle UI
-├── popup/            # Extension popup (version info)
+├── storage.ts        # Per-repo enabled/disabled state (browser.storage.local)
+├── popup/            # Extension popup: version info and per-repo toggle
 ├── background/       # Minimal MV3 service worker
 └── content.ts        # Entry point: adapter selection, run loop, navigation binding
 ```
