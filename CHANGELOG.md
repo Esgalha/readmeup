@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Collapsible README toggle: a Hide/Show button above the moved README section, with collapsed state persisted per repo for the current browser session.
+
 ### Changed
 
 - CI workflow skips the test and build pipeline when only documentation files or Dependabot config change.
