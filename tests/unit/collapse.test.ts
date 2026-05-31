@@ -1,6 +1,12 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it } from 'vitest';
-import { setupCollapse } from '../../src/collapse.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { setupCollapse, preloadCollapsedState } from '../../src/collapse.js';
+
+vi.mock('../../src/storage.js', () => ({
+  setRepoCollapsed: vi.fn().mockResolvedValue(undefined),
+}));
+
+import { setRepoCollapsed } from '../../src/storage.js';
 
 function makeDOM(): { anchor: HTMLElement; collapseTarget: HTMLElement } {
   const wrapper = document.createElement('div');
@@ -16,9 +22,12 @@ function makeDOM(): { anchor: HTMLElement; collapseTarget: HTMLElement } {
   return { anchor, collapseTarget };
 }
 
+const repoKey = location.pathname.split('/').filter(Boolean).slice(0, 2).join('/');
+
 beforeEach(() => {
   document.body.innerHTML = '';
-  sessionStorage.clear();
+  preloadCollapsedState(new Set());
+  vi.mocked(setRepoCollapsed).mockClear();
 });
 
 describe('setupCollapse', () => {
@@ -54,31 +63,25 @@ describe('setupCollapse', () => {
     expect(btn.textContent).toBe('▼︎');
   });
 
-  it('persists collapsed state to sessionStorage', () => {
+  it('calls setRepoCollapsed(key, true) on collapse', () => {
     const { anchor, collapseTarget } = makeDOM();
     setupCollapse(anchor, collapseTarget);
     const btn = document.querySelector<HTMLButtonElement>('[data-readmeup-toggle]')!;
     btn.click();
-    const key =
-      'readmeup:collapsed:' + location.pathname.split('/').filter(Boolean).slice(0, 2).join('/');
-    expect(sessionStorage.getItem(key)).toBe('1');
+    expect(setRepoCollapsed).toHaveBeenCalledWith(repoKey, true);
   });
 
-  it('removes collapsed state from sessionStorage on expand', () => {
+  it('calls setRepoCollapsed(key, false) on expand', () => {
     const { anchor, collapseTarget } = makeDOM();
     setupCollapse(anchor, collapseTarget);
     const btn = document.querySelector<HTMLButtonElement>('[data-readmeup-toggle]')!;
     btn.click();
     btn.click();
-    const key =
-      'readmeup:collapsed:' + location.pathname.split('/').filter(Boolean).slice(0, 2).join('/');
-    expect(sessionStorage.getItem(key)).toBeNull();
+    expect(setRepoCollapsed).toHaveBeenLastCalledWith(repoKey, false);
   });
 
-  it('starts collapsed when sessionStorage has the key set', () => {
-    const key =
-      'readmeup:collapsed:' + location.pathname.split('/').filter(Boolean).slice(0, 2).join('/');
-    sessionStorage.setItem(key, '1');
+  it('starts collapsed when preloadCollapsedState contains the repo key', () => {
+    preloadCollapsedState(new Set([repoKey]));
     const { anchor, collapseTarget } = makeDOM();
     setupCollapse(anchor, collapseTarget);
     expect(collapseTarget.style.display).toBe('none');
