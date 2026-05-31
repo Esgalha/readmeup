@@ -16,7 +16,12 @@ vi.mock('webextension-polyfill', () => ({
   },
 }));
 
-import { getDisabledRepos, setRepoEnabled } from '../../src/storage.js';
+import {
+  getDisabledRepos,
+  setRepoEnabled,
+  getCollapsedRepos,
+  setRepoCollapsed,
+} from '../../src/storage.js';
 
 beforeEach(() => {
   Object.keys(store).forEach((k) => delete store[k]);
@@ -63,5 +68,41 @@ describe('setRepoEnabled', () => {
     const result = await getDisabledRepos();
     expect(result.has('github.com/owner/other')).toBe(true);
     expect(result.has('github.com/owner/repo')).toBe(true);
+  });
+});
+
+describe('getCollapsedRepos', () => {
+  it('returns an empty set when nothing is stored', async () => {
+    const result = await getCollapsedRepos();
+    expect(result.size).toBe(0);
+  });
+
+  it('returns stored repo keys as a Set', async () => {
+    store['collapsedRepos'] = ['github.com/owner/a', 'gitlab.com/owner/b'];
+    const result = await getCollapsedRepos();
+    expect(result.has('github.com/owner/a')).toBe(true);
+    expect(result.has('gitlab.com/owner/b')).toBe(true);
+  });
+});
+
+describe('setRepoCollapsed', () => {
+  it('adds a repo key when collapsed', async () => {
+    await setRepoCollapsed('github.com/owner/repo', true);
+    const result = await getCollapsedRepos();
+    expect(result.has('github.com/owner/repo')).toBe(true);
+  });
+
+  it('removes a repo key when expanded', async () => {
+    store['collapsedRepos'] = ['github.com/owner/repo'];
+    await setRepoCollapsed('github.com/owner/repo', false);
+    const result = await getCollapsedRepos();
+    expect(result.has('github.com/owner/repo')).toBe(false);
+  });
+
+  it('does not affect disabled repos storage', async () => {
+    store['disabledRepos'] = ['github.com/owner/repo'];
+    await setRepoCollapsed('github.com/owner/repo', true);
+    const disabled = await getDisabledRepos();
+    expect(disabled.has('github.com/owner/repo')).toBe(true);
   });
 });

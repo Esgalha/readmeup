@@ -3,8 +3,8 @@ import { createBitbucketAdapter } from './adapters/bitbucket.js';
 import { createGitHubAdapter } from './adapters/github.js';
 import { createGitLabAdapter } from './adapters/gitlab.js';
 import { registerAdapter, getAdapter } from './adapters/registry.js';
-import { setupCollapse } from './collapse.js';
-import { getDisabledRepos, setRepoEnabled } from './storage.js';
+import { setupCollapse, preloadCollapsedState } from './collapse.js';
+import { getDisabledRepos, setRepoEnabled, getCollapsedRepos } from './storage.js';
 
 registerAdapter('github.com', createGitHubAdapter);
 registerAdapter('gitlab.com', createGitLabAdapter);
@@ -144,9 +144,10 @@ browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 const hostname = location.hostname;
 const adapter = getAdapter(hostname);
 if (adapter) {
-  // Load disabled repos from storage before first run to avoid a flash on disabled repos.
-  getDisabledRepos().then((stored) => {
-    stored.forEach((k) => disabledRepos.add(k));
+  // Load persisted state before first run to avoid a flash on disabled or collapsed repos.
+  Promise.all([getDisabledRepos(), getCollapsedRepos()]).then(([disabled, collapsed]) => {
+    disabled.forEach((k) => disabledRepos.add(k));
+    preloadCollapsedState(collapsed);
     run();
   });
   adapter.onNavigate(run);

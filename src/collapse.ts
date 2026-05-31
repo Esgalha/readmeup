@@ -1,5 +1,6 @@
+import { setRepoCollapsed } from './storage.js';
+
 const STYLE_ID = 'readmeup-toggle-style';
-const STORAGE_PREFIX = 'readmeup:collapsed:';
 
 function injectStyle(): void {
   if (document.getElementById(STYLE_ID)) return;
@@ -15,11 +16,18 @@ function repoKey(): string {
   return location.pathname.split('/').filter(Boolean).slice(0, 2).join('/');
 }
 
+const collapsedRepos = new Set<string>();
+
+export function preloadCollapsedState(stored: Set<string>): void {
+  collapsedRepos.clear();
+  stored.forEach((k) => collapsedRepos.add(k));
+}
+
 export function setupCollapse(anchor: HTMLElement, collapseTarget: HTMLElement): () => void {
   injectStyle();
 
-  const key = STORAGE_PREFIX + repoKey();
-  const startCollapsed = sessionStorage.getItem(key) === '1';
+  const key = repoKey();
+  const startCollapsed = collapsedRepos.has(key);
 
   const btn = document.createElement('button');
   btn.setAttribute('data-readmeup-toggle', '');
@@ -52,13 +60,15 @@ export function setupCollapse(anchor: HTMLElement, collapseTarget: HTMLElement):
 
   function collapse(): void {
     collapseTarget.style.display = 'none';
-    sessionStorage.setItem(key, '1');
+    collapsedRepos.add(key);
+    setRepoCollapsed(key, true);
     btn.textContent = '▶︎';
   }
 
   function expand(): void {
     collapseTarget.style.display = '';
-    sessionStorage.removeItem(key);
+    collapsedRepos.delete(key);
+    setRepoCollapsed(key, false);
     btn.textContent = '▼︎';
   }
 
