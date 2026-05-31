@@ -108,7 +108,7 @@ npm run typecheck
 
 ## Architecture
 
-Single content script entry point (`src/content.ts`). An adapter registry maps the current hostname to a `PlatformAdapter`. On each page load and SPA navigation the content script calls `adapter.reorganize()`, which physically moves DOM elements to put the README first. If the target elements are not in the DOM yet (SPAs render asynchronously), a `MutationObserver` retry loop watches for up to 5 seconds before giving up.
+Single content script entry point (`src/content.ts`). An adapter registry maps the current hostname to a `PlatformAdapter`. On each page load and SPA navigation the content script calls `adapter.reorganize()`, which physically moves DOM elements to put the README first, then `adapter.getCollapseTargets()` to attach a collapse toggle. If the target elements are not in the DOM yet (SPAs render asynchronously), a `MutationObserver` retry loop watches for up to 5 seconds before giving up.
 
 ```
 src/
@@ -118,6 +118,7 @@ src/
 │   ├── github.ts     # GitHub: walk-up from .markdown-body / <pre>, two-phase hoist
 │   ├── gitlab.ts     # GitLab: walk-up from .readme-holder, two-phase hoist
 │   └── bitbucket.ts  # Bitbucket: walk-up from <article>
+├── collapse.ts       # Platform-agnostic collapse toggle UI
 ├── popup/            # Extension popup (version info)
 ├── background/       # Minimal MV3 service worker
 └── content.ts        # Entry point: adapter selection, run loop, navigation binding
@@ -126,6 +127,10 @@ src/
 ### How `reorganize()` works
 
 Each adapter walks up the DOM from the README element, looking for the level where a preceding sibling contains the file-browser table. It then inserts the README section before everything at that level (phase 1). If the file-browser container itself has preceding siblings at its own parent level (e.g. a branch picker bar that lives one level above the file browser), the README is lifted up to that outer level instead, so the final order is always: README, branch bar, file browser (phase 2).
+
+### How `getCollapseTargets()` works
+
+After `reorganize()` succeeds, the content script calls `getCollapseTargets()` to get the two elements needed for the collapse toggle: `anchor` (where the button is inserted) and `collapseTarget` (the element that gets hidden). Each adapter returns the pair that matches its platform's DOM structure, or `null` to skip the toggle entirely (Bitbucket has a native collapse). The toggle itself is platform-agnostic and lives in `collapse.ts`.
 
 ## Contributing
 
