@@ -114,7 +114,7 @@ npm run typecheck
 
 ## Architecture
 
-Single content script entry point (`src/content.ts`). An adapter registry maps the current hostname to a `PlatformAdapter`. On each page load and SPA navigation the content script calls `adapter.reorganize()`, which physically moves DOM elements to put the README first, then `adapter.getCollapseTargets()` to attach a collapse toggle. If the target elements are not in the DOM yet (SPAs render asynchronously), a `MutationObserver` retry loop watches for up to 5 seconds before giving up.
+Single content script entry point (`src/content.ts`). An adapter registry maps the current hostname to a `PlatformAdapter`. On each page load and SPA navigation the content script calls `adapter.reorganize()`, which physically moves DOM elements to put the README first, then `adapter.getCollapseTargets()` to attach a collapse toggle (collapsed state persisted per repo in `browser.storage.local`). If the target elements are not in the DOM yet (SPAs render asynchronously), a `MutationObserver` retry loop watches for up to 5 seconds before giving up.
 
 ```
 src/
@@ -125,7 +125,7 @@ src/
 │   ├── gitlab.ts     # GitLab: walk-up from .readme-holder, two-phase hoist
 │   └── bitbucket.ts  # Bitbucket: walk-up from <article>
 ├── collapse.ts       # Platform-agnostic collapse toggle UI
-├── storage.ts        # Per-repo enabled/disabled state (browser.storage.local)
+├── storage.ts        # Per-repo enabled/disabled and collapsed state (browser.storage.local)
 ├── popup/            # Extension popup: version info and per-repo toggle
 ├── background/       # Minimal MV3 service worker
 └── content.ts        # Entry point: adapter selection, run loop, navigation binding
