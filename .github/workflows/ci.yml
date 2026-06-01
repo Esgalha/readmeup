@@ -3,18 +3,28 @@ name: CI
 on:
   push:
     branches: [master]
-    paths-ignore:
-      - '**.md'
-      - 'screenshots/**'
-      - '.github/dependabot.yml'
   pull_request:
-    paths-ignore:
-      - '**.md'
-      - 'screenshots/**'
-      - '.github/dependabot.yml'
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.check.outputs.code }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Detect code changes
+        id: check
+        run: |
+          git diff --name-only origin/${{ github.base_ref || 'master' }}...HEAD \
+            | grep -qvE '^(.*\.md|screenshots/|\.github/dependabot\.yml)$' \
+            && echo "code=true" >> "$GITHUB_OUTPUT" \
+            || echo "code=false" >> "$GITHUB_OUTPUT"
+
   ci:
+    needs: changes
     name: Lint, type-check, test
     runs-on: ubuntu-latest
     permissions:
@@ -22,43 +32,58 @@ jobs:
       pull-requests: write
 
     steps:
+      - name: Skip (docs-only change)
+        if: needs.changes.outputs.code == 'false'
+        run: echo "Documentation-only change, skipping CI"
+
       - uses: actions/checkout@v6
+        if: needs.changes.outputs.code == 'true'
 
       - uses: actions/setup-node@v6
+        if: needs.changes.outputs.code == 'true'
         with:
           node-version: 20
           cache: npm
 
       - name: Install dependencies
+        if: needs.changes.outputs.code == 'true'
         run: npm ci
 
       - name: Format check
+        if: needs.changes.outputs.code == 'true'
         run: npm run format:check
 
       - name: Lint
+        if: needs.changes.outputs.code == 'true'
         run: npm run lint
 
       - name: Type-check
+        if: needs.changes.outputs.code == 'true'
         run: npm run typecheck
 
       - name: Unit and integration tests with coverage
+        if: needs.changes.outputs.code == 'true'
         run: npm run test:coverage
 
       - name: Post coverage report
         uses: davelosert/vitest-coverage-report-action@v2
-        if: always()
+        if: needs.changes.outputs.code == 'true'
         continue-on-error: true
         with:
           json-summary-path: coverage/coverage-summary.json
 
       - name: Build Chrome extension
+        if: needs.changes.outputs.code == 'true'
         run: npm run build:chrome
 
       - name: Build Firefox extension
+        if: needs.changes.outputs.code == 'true'
         run: npm run build:firefox
 
       - name: Install Playwright browsers
+        if: needs.changes.outputs.code == 'true'
         run: npx playwright install chromium --with-deps
 
       - name: E2E tests
+        if: needs.changes.outputs.code == 'true'
         run: xvfb-run --auto-servernum -- npm run test:e2e
