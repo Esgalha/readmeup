@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Collapsible README toggle: a Hide/Show button above the moved README section, with collapsed state persisted per repo across browser sessions.
 - Per-repo toggle in the extension popup to permanently disable ReadmeUp on individual repositories, with the preference stored across browser sessions.
+- Extension now available on the [Chrome Web Store](https://chromewebstore.google.com/detail/readmeup/blmmekffobioflgmkdfgechgjkicmema).
 
 ### Fixed
 
