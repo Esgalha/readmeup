@@ -16,9 +16,11 @@ The extension popup shows a toggle to disable ReadmeUp on the current repository
 
 ## Screenshots
 
-![ReadmeUp on its own repository page](screenshots/GitHubReadmeup.png)
+| Expanded                                               | Collapsed                                                        |
+| ------------------------------------------------------ | ---------------------------------------------------------------- |
+| ![ReadmeUp — expanded](screenshots/GitHubReadmeup.png) | ![ReadmeUp — collapsed](screenshots/GitHubReadmeupCollapsed.png) |
 
-| GitHub                                                  | GitLab                                 | Bitbucket                                                    |
+| GitHub — torvalds/linux                                 | GitLab FOSS                            | Bitbucket — Atlassian AUI                                    |
 | ------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------ |
 | ![GitHub — torvalds/linux](screenshots/GitHubLinux.png) | ![GitLab FOSS](screenshots/GitLab.png) | ![Atlassian DC Frontend Platform](screenshots/Bitbucket.png) |
 
