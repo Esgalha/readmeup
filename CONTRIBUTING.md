@@ -63,7 +63,7 @@ After `reorganize()` moves the README to the top, the content script calls `getC
 - `anchor`: the element the toggle button is inserted into. Should stay visible when the README is hidden (typically a title bar or header row).
 - `collapseTarget`: the element that gets hidden on collapse (typically the README content area).
 
-Return `null` if the platform has a native collapse or the toggle is not appropriate. The button rendering and session-storage state are handled by `collapse.ts`; the adapter only needs to identify the right elements.
+Return `null` if the platform has a native collapse or the toggle is not appropriate. The button rendering and persistent state are handled by `collapse.ts`; the adapter only needs to identify the right elements.
 
 ## Submitting a pull request
 
