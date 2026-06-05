@@ -24,6 +24,15 @@ npm run dev:firefox   # start Vite in watch mode for Firefox
 
 Load the extension from `dist/chrome` or `dist/firefox` as an unpacked extension in your browser.
 
+## Updating screenshots
+
+```bash
+npm run build:chrome
+node scripts/screenshots.mjs
+```
+
+This captures live screenshots from GitHub, GitLab, and Bitbucket with the extension active and writes them to `screenshots/`. Run it before opening a PR that changes the extension's visual output.
+
 ## Checks
 
 All of the following must pass before submitting a pull request:
